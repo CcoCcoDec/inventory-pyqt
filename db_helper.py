@@ -4,7 +4,7 @@ DB_CONFIG = dict(
                 host = 'localhost',
                 user = 'root',
                 password = '1q2w3e4r',
-                database = 'inventory'
+                database = 'inventory',
                 charset = 'utf8'
                 )
 
@@ -26,7 +26,7 @@ class DB:
                 return count == 1
 
     # 재고 정보 란에 띄울 모든 erp 정보들
-     def fetch_erp(self):
+    def fetch_erp(self):
         sql = "SELECT 관리번호, 분류, 자재명, 재고수량, 수량단위, 재고단가, 단가단위, 업데이트, 등록자 FROM erp ORDER BY id"
         with self.connect() as conn:
             with conn.cursor() as cur:
@@ -34,7 +34,7 @@ class DB:
                 return cur.fetchall()
 
     # 재고 조회 창 상단 메뉴 중 재고 추가
-    def insert_member(self, 관리번호, 분류, 자재명, 재고수량, 수량단위, 재고단가, 단가단위, 업데이트, 등록자):
+    def insert_erp(self, 관리번호, 분류, 자재명, 재고수량, 수량단위, 재고단가, 단가단위, 업데이트, 등록자):
         sql = "INSERT INTO erp (관리번호, 분류, 자재명, 재고수량, 수량단위, 재고단가, 단가단위, 업데이트, 등록자) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
         with self.connect() as conn:
             try:
@@ -52,4 +52,4 @@ class DB:
 
     # 재고 조회 창 재고 정보 란 내 칸 눌러서 재고 정보 수정
 
-    
+
