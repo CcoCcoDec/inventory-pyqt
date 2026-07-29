@@ -39,7 +39,7 @@ class DB:
         with self.connect() as conn:
             try:
                 with conn.cursor() as cur:
-                    cut.execute(sql, (관리번호, 분류, 자재명, 재고수량, 수량단위, 재고단가, 단가단위, 업데이트, 등록자))
+                    cur.execute(sql, (관리번호, 분류, 자재명, 재고수량, 수량단위, 재고단가, 단가단위, 업데이트, 등록자))
                     conn.commit()
                     return True
 
