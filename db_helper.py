@@ -1,3 +1,5 @@
+# db_helper.py
+
 import pymysql
 
 DB_CONFIG = dict(
@@ -27,7 +29,7 @@ class DB:
 
     # 재고 정보 란에 띄울 모든 erp 정보들
     def fetch_erp(self):
-        sql = "SELECT 관리번호, 분류, 자재명, 재고수량, 수량단위, 재고단가, 단가단위, 업데이트, 등록자 FROM erp ORDER BY id"
+        sql = "SELECT 관리번호, 분류, 자재명, 재고수량, 수량단위, 재고단가, 단가단위, 업데이트, 등록자 FROM erp ORDER BY 업데이트 DESC"
         with self.connect() as conn:
             with conn.cursor() as cur:
                 cur.execute(sql)
