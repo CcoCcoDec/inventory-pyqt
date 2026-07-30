@@ -10,8 +10,7 @@ from sub_window_info import SubWindow_info
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("OO주식회사 품질보증팀 재고 관리")
-        self.db = DB(**DB_CONFIG)
+        self.setWindowTitle("erp")
 
         central = QWidget()
         self.setCentralWidget(central)
@@ -43,4 +42,5 @@ class MainWindow(QMainWindow):
     def open_subwindow_info(self):
         self.sub = SubWindow_info()
         self.sub.show()
+        self.sub.resize(300, 100)
 

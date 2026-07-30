@@ -7,7 +7,7 @@ from db_helper import DB, DB_CONFIG
 class SubWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("OO주식회사 품질보증팀 재고 관리 - 재고 조회")
+        self.setWindowTitle("재고 조회")
         self.db = DB(**DB_CONFIG)
 
         central = QWidget()
