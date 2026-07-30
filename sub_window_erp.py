@@ -81,7 +81,7 @@ class SubWindow(QMainWindow):
         title_label.setFont(title_font)
 
         notice_label = QLabel(
-            "안내: 재고 정보 표의 행을 클릭하면 재고 정보 수정 창이 열립니다."
+            "재고 정보 표 값 클릭: 수정 및 삭제\n헤더 클릭: 정렬"
         )
 
         vbox.addWidget(title_label)
