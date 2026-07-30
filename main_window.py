@@ -1,5 +1,6 @@
 # main_window.py
 
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QTableWidget, QTableWidgetItem, \
     QLabel, QLineEdit, QPushButton, QMessageBox
 from db_helper import DB, DB_CONFIG
@@ -15,6 +16,14 @@ class MainWindow(QMainWindow):
         central = QWidget()
         self.setCentralWidget(central)
         vbox = QVBoxLayout(central)
+        title_label = QLabel("OO기업 품질보증팀 재고 정보")
+
+        title_font = QFont()
+        title_font.setPointSize(18)
+        title_font.setBold(True)
+
+        title_label.setFont(title_font)
+        vbox.addWidget(title_label)
 
         form_box = QHBoxLayout()
 

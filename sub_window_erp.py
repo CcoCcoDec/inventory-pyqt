@@ -1,8 +1,9 @@
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QTableWidget, QTableWidgetItem, QLabel, QLineEdit,
-    QPushButton, QMessageBox, QDialog, QFormLayout
-)
+    QTableWidget, QTableWidgetItem, QAbstractItemView,
+    QLabel, QLineEdit, QPushButton, QMessageBox,
+    QDialog, QFormLayout)
 from db_helper import DB, DB_CONFIG
 
 
@@ -13,6 +14,8 @@ HEADERS = [
 
 
 class EditDialog(QDialog):
+    DELETE_RESULT = 2
+
     def __init__(self, row_data, parent=None):
         super().__init__(parent)
         self.setWindowTitle("재고 정보 수정")
@@ -25,12 +28,31 @@ class EditDialog(QDialog):
             self.inputs.append(line)
             form.addRow(title, line)
 
-        # 관리번호는 수정 기준값이므로 변경하지 않도록 설정
+        # 관리번호는 수정 및 삭제의 기준값
         self.inputs[0].setReadOnly(True)
+
+        button_box = QHBoxLayout()
 
         self.btn_save = QPushButton("수정 저장")
         self.btn_save.clicked.connect(self.accept)
-        form.addRow(self.btn_save)
+
+        self.btn_delete = QPushButton("삭제")
+        self.btn_delete.clicked.connect(self.delete_item)
+
+        button_box.addWidget(self.btn_save)
+        button_box.addWidget(self.btn_delete)
+        form.addRow(button_box)
+
+    def delete_item(self):
+        answer = QMessageBox.question(
+            self,
+            "재고 정보 삭제",
+            "정말 이 재고 정보를 삭제하시겠습니까?",
+            QMessageBox.Yes | QMessageBox.No
+        )
+
+        if answer == QMessageBox.Yes:
+            self.done(self.DELETE_RESULT)
 
     def values(self):
         return [input_box.text().strip() for input_box in self.inputs]
@@ -45,6 +67,19 @@ class SubWindow(QMainWindow):
         central = QWidget()
         self.setCentralWidget(central)
         vbox = QVBoxLayout(central)
+
+        title_label = QLabel("OO기업 품질보증팀 재고 정보")
+        title_font = QFont()
+        title_font.setPointSize(18)
+        title_font.setBold(True)
+        title_label.setFont(title_font)
+
+        notice_label = QLabel(
+            "안내: 재고 정보 표의 행을 클릭하면 재고 정보 수정 창이 열립니다."
+        )
+
+        vbox.addWidget(title_label)
+        vbox.addWidget(notice_label)
 
         # 재고 추가 영역
         add_box = QHBoxLayout()
@@ -85,6 +120,7 @@ class SubWindow(QMainWindow):
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.table.verticalHeader().setVisible(False)
         self.table.cellClicked.connect(self.edit_erp)
+        self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
 
         vbox.addLayout(add_box)
         vbox.addLayout(search_box)
@@ -157,8 +193,23 @@ class SubWindow(QMainWindow):
             row_data.append(item.text())
 
         dialog = EditDialog(row_data, self)
+        result = dialog.exec_()
 
-        if dialog.exec_() != QDialog.Accepted:
+        # 삭제 버튼을 눌렀고, 삭제 확인까지 완료한 경우
+        if result == EditDialog.DELETE_RESULT:
+            관리번호 = row_data[0]
+            ok = self.db.delete_erp(관리번호)
+
+            if ok:
+                QMessageBox.information(self, "완료", "재고 정보가 삭제되었습니다.")
+                self.search_erp()
+            else:
+                QMessageBox.critical(self, "실패", "재고 정보 삭제 중 오류가 발생했습니다.")
+
+            return
+
+        # 수정 창에서 취소한 경우
+        if result != QDialog.Accepted:
             return
 
         values = dialog.values()
@@ -168,8 +219,8 @@ class SubWindow(QMainWindow):
             return
 
         try:
-            values[3] = int(values[3])
-            values[5] = int(values[5])
+            values[3] = int(values[3])  # 재고수량
+            values[5] = int(values[5])  # 재고단가
         except ValueError:
             QMessageBox.warning(
                 self,
