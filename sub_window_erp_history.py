@@ -1,7 +1,8 @@
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QTableWidget, QTableWidgetItem, QLabel, QPushButton
+    QTableWidget, QTableWidgetItem, QLabel, QPushButton,
+    QLineEdit, QHeaderView
 )
 from db_helper import DB, DB_CONFIG
 from ui_style import apply_common_style
@@ -43,9 +44,20 @@ class SubWindow_history(QMainWindow):
 
         top_box = QHBoxLayout()
 
-        self.btn_refresh = QPushButton("새로고침")
+        top_box.addWidget(QLabel("관리번호"))
+
+        self.management_input = QLineEdit()
+        self.management_input.setPlaceholderText("관리번호 입력")
+        self.management_input.returnPressed.connect(self.search_history)
+
+        self.btn_search = QPushButton("조회")
+        self.btn_search.clicked.connect(self.search_history)
+
+        self.btn_refresh = QPushButton("전체 조회")
         self.btn_refresh.clicked.connect(self.load_history)
 
+        top_box.addWidget(self.management_input)
+        top_box.addWidget(self.btn_search)
         top_box.addWidget(self.btn_refresh)
         top_box.addStretch()
 
@@ -55,6 +67,22 @@ class SubWindow_history(QMainWindow):
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.table.verticalHeader().setVisible(False)
 
+        # 각 헤더 클릭 시 오름차순/내림차순 정렬
+        self.table.setSortingEnabled(True)
+
+        # 이력 내용이 긴 열을 넓게 표시
+        self.table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.Interactive
+        )
+
+        self.table.setColumnWidth(0, 70)   # 이력번호
+        self.table.setColumnWidth(1, 80)   # 작업구분
+        self.table.setColumnWidth(2, 100)  # 관리번호
+        self.table.setColumnWidth(3, 260)  # 변경 전 값
+        self.table.setColumnWidth(4, 260)  # 변경 후 값
+        self.table.setColumnWidth(5, 150)  # 처리일시
+        self.table.setColumnWidth(6, 100)  # 등록자
+
         vbox.addWidget(title_label)
         vbox.addWidget(notice_label)
         vbox.addLayout(top_box)
@@ -62,9 +90,8 @@ class SubWindow_history(QMainWindow):
 
         self.load_history()
 
-    def load_history(self):
-        rows = self.db.get_history()
-
+    def show_history(self, rows):
+        self.table.setSortingEnabled(False)
         self.table.setRowCount(len(rows))
 
         for row_index, row_data in enumerate(rows):
@@ -75,4 +102,16 @@ class SubWindow_history(QMainWindow):
                     QTableWidgetItem(str(value))
                 )
 
-        self.table.resizeColumnsToContents()
+        self.table.setSortingEnabled(True)
+
+    def load_history(self):
+        self.management_input.clear()
+
+        rows = self.db.get_history()
+        self.show_history(rows)
+
+    def search_history(self):
+        관리번호 = self.management_input.text().strip()
+
+        rows = self.db.get_history(관리번호)
+        self.show_history(rows)

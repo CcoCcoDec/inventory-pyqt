@@ -81,7 +81,7 @@ class SubWindow(QMainWindow):
         title_label.setFont(title_font)
 
         notice_label = QLabel(
-            "재고 정보 표 값 클릭: 수정 및 삭제\n헤더 클릭: 정렬"
+            "테이블 행 클릭: 수정 및 삭제\n헤더 클릭: 정렬"
         )
 
         vbox.addWidget(title_label)
@@ -138,8 +138,20 @@ class SubWindow(QMainWindow):
         # 열 제목을 클릭할 때마다 오름차순/내림차순 정렬
         self.table.setSortingEnabled(True)
 
-        # 각 열이 테이블의 가로 폭을 모두 사용하도록 설정
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        # 열 너비를 사용 목적에 맞게 조정
+        self.table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.Interactive
+        )
+
+        self.table.setColumnWidth(0, 100)  # 관리번호
+        self.table.setColumnWidth(1, 90)   # 분류
+        self.table.setColumnWidth(2, 260)  # 자재명
+        self.table.setColumnWidth(3, 70)   # 재고수량
+        self.table.setColumnWidth(4, 70)   # 수량단위
+        self.table.setColumnWidth(5, 100)  # 재고단가
+        self.table.setColumnWidth(6, 90)   # 단가단위
+        self.table.setColumnWidth(7, 120)  # 업데이트
+        self.table.setColumnWidth(8, 100)  # 등록자
 
         self.table.cellClicked.connect(self.edit_erp)
 

@@ -278,15 +278,22 @@ class DB:
             (작업구분, 관리번호, 변경전, 변경후, 등록자)
         )
 
-    def get_history(self):
+    def get_history(self, 관리번호=None):
         sql = """
             SELECT 이력번호, 작업구분, 관리번호, 변경전, 변경후,
                    처리일시, 등록자
             FROM erp_history
-            ORDER BY 처리일시 DESC
         """
+
+        params = []
+
+        if 관리번호:
+            sql += " WHERE 관리번호 LIKE %s"
+            params.append(f"%{관리번호}%")
+
+        sql += " ORDER BY 처리일시 DESC"
 
         with self.connect() as conn:
             with conn.cursor() as cur:
-                cur.execute(sql)
+                cur.execute(sql, params)
                 return cur.fetchall()
