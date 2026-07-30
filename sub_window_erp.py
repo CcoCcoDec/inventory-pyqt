@@ -1,17 +1,18 @@
+from PyQt5.QtCore import QDate
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QTableWidget, QTableWidgetItem, QAbstractItemView,
+    QHeaderView, QDateEdit,
     QLabel, QLineEdit, QPushButton, QMessageBox,
     QDialog, QFormLayout)
 from db_helper import DB, DB_CONFIG
-
+from ui_style import apply_common_style
 
 HEADERS = [
     "관리번호", "분류", "자재명", "재고수량", "수량단위",
     "재고단가", "단가단위", "업데이트", "등록자"
 ]
-
 
 class EditDialog(QDialog):
     DELETE_RESULT = 2
@@ -65,8 +66,13 @@ class SubWindow(QMainWindow):
         self.db = DB(**DB_CONFIG)
 
         central = QWidget()
+        central.setObjectName("contentArea")
         self.setCentralWidget(central)
+
+        apply_common_style(self)
+
         vbox = QVBoxLayout(central)
+        vbox.setContentsMargins(30, 25, 30, 30)
 
         title_label = QLabel("OO기업 품질보증팀 재고 정보")
         title_font = QFont()
@@ -86,8 +92,16 @@ class SubWindow(QMainWindow):
         self.inputs = []
 
         for title in HEADERS:
-            input_box = QLineEdit()
-            input_box.setPlaceholderText(title)
+            if title == "업데이트":
+                input_box = QDateEdit()
+                input_box.setDisplayFormat("yyyy-MM-dd")
+                input_box.setCalendarPopup(True)
+                input_box.setDate(QDate.currentDate())
+                input_box.setToolTip("날짜 형식: YYYY-MM-DD")
+            else:
+                input_box = QLineEdit()
+                input_box.setPlaceholderText(title)
+
             self.inputs.append(input_box)
             add_box.addWidget(input_box)
 
@@ -118,9 +132,16 @@ class SubWindow(QMainWindow):
         self.table.setColumnCount(len(HEADERS))
         self.table.setHorizontalHeaderLabels(HEADERS)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
-        self.table.verticalHeader().setVisible(False)
-        self.table.cellClicked.connect(self.edit_erp)
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.table.verticalHeader().setVisible(False)
+
+        # 열 제목을 클릭할 때마다 오름차순/내림차순 정렬
+        self.table.setSortingEnabled(True)
+
+        # 각 열이 테이블의 가로 폭을 모두 사용하도록 설정
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+        self.table.cellClicked.connect(self.edit_erp)
 
         vbox.addLayout(add_box)
         vbox.addLayout(search_box)
@@ -129,6 +150,7 @@ class SubWindow(QMainWindow):
         self.load_erp()
 
     def show_rows(self, rows):
+        self.table.setSortingEnabled(False)
         self.table.setRowCount(len(rows))
 
         for row_index, row_data in enumerate(rows):
@@ -139,7 +161,7 @@ class SubWindow(QMainWindow):
                     QTableWidgetItem(str(value))
                 )
 
-        self.table.resizeColumnsToContents()
+        self.table.setSortingEnabled(True)
 
     def load_erp(self):
         rows = self.db.fetch_erp()

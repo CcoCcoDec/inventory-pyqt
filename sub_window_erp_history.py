@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import (
     QTableWidget, QTableWidgetItem, QLabel, QPushButton
 )
 from db_helper import DB, DB_CONFIG
+from ui_style import apply_common_style
 
 
 HEADERS = [
@@ -20,8 +21,13 @@ class SubWindow_history(QMainWindow):
         self.db = DB(**DB_CONFIG)
 
         central = QWidget()
+        central.setObjectName("contentArea")
         self.setCentralWidget(central)
+
+        apply_common_style(self)
+
         vbox = QVBoxLayout(central)
+        vbox.setContentsMargins(30, 25, 30, 30)
 
         title_label = QLabel("OO기업 품질보증팀 재고 관리 이력")
 
