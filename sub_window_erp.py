@@ -1,3 +1,5 @@
+# sub_window_erp.py
+
 from PyQt5.QtCore import QDate
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (

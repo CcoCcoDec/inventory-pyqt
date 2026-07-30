@@ -1,3 +1,5 @@
+# ui_style.py
+
 from PyQt5.QtGui import QFont
 
 

@@ -1,3 +1,4 @@
+# sub_window_info.py
 
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QTableWidget, QTableWidgetItem, \
     QLabel, QLineEdit, QPushButton, QMessageBox, QFrame

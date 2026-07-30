@@ -1,3 +1,5 @@
+# sub_window_erp_history.py
+
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
