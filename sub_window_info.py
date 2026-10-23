@@ -13,7 +13,7 @@ class SubWindow_info(QMainWindow):
 
         label = QLabel(self)
         label.setFrameStyle(QFrame.Panel)
-        label.setText("버전 정보: V1.0\n관리자: 김진태\n연락처: turtle950211@gmail.com")
+        label.setText("버전 정보: V1.0\n관리자: 프로젝트 관리자\n연락처: 미등록")
         label.setAlignment(Qt.AlignCenter)
         label.resize(300, 100)
 

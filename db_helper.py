@@ -3,13 +3,25 @@
 import pymysql
 import json
 
-DB_CONFIG = dict(
-    host="localhost",
-    user="root",
-    password="1q2w3e4r",
-    database="inventory",
-    charset="utf8"
-)
+# ============================================================
+# MySQL 접속 정보: 아래 변수만 본인 환경에 맞게 수정하세요.
+# 실제 비밀번호를 입력한 이 파일은 공개 저장소에 올리지 마세요.
+# ============================================================
+DB_HOST = "localhost"       # MySQL 서버 주소
+DB_PORT = 3306               # MySQL 포트
+DB_USER = "root"             # MySQL 사용자명
+DB_PASSWORD = "여기에_비밀번호_입력"  # MySQL 비밀번호
+DB_NAME = "inventory"        # 사용할 데이터베이스명
+
+DB_CONFIG = {
+    "host": DB_HOST,
+    "port": DB_PORT,
+    "user": DB_USER,
+    "password": DB_PASSWORD,
+    "database": DB_NAME,
+    "charset": "utf8mb4",
+    "connect_timeout": 5,
+}
 
 
 class DB:
